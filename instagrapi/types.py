@@ -1,13 +1,11 @@
 from typing import List, Optional
-from .validators import (
-    BaseModel, HttpUrl, FilePath, Datetime
-)
+from .validators import BaseModel, HttpUrl, FilePath, Datetime
 
 
 class Resource(BaseModel):
     pk: int
-    video_url: Optional[HttpUrl]  # for Video and IGTV
-    thumbnail_url: HttpUrl
+    video_url: Optional[HttpUrl] = None  # for Video and IGTV
+    thumbnail_url: Optional[HttpUrl] = None
     media_type: int
 
 
@@ -16,58 +14,48 @@ class User(BaseModel):
     username: str
     full_name: str
     is_private: bool
-    profile_pic_url: HttpUrl
+    profile_pic_url: Optional[HttpUrl] = None
     is_verified: bool
     media_count: int
     follower_count: int
     following_count: int
     biography: Optional[str] = ''
-    external_url: Optional[HttpUrl]
+    external_url: Optional[HttpUrl] = None
     is_business: bool
 
 
-class Account(BaseModel):
-    pk: int
-    username: str
-    full_name: str
-    is_private: bool
-    profile_pic_url: HttpUrl
-    is_verified: bool
-    biography: Optional[str] = ''
-    external_url: Optional[HttpUrl]
-    is_business: bool
-    birthday: Optional[str]
-    phone_number: Optional[str]
-    gender: Optional[int]
-    email: Optional[str]
+class Account(User):
+    birthday: Optional[str] = None
+    phone_number: Optional[str] = None
+    gender: Optional[int] = None
+    email: Optional[str] = None
 
 
 class UserShort(BaseModel):
     pk: int
-    username: Optional[str]
+    username: Optional[str] = None
     full_name: Optional[str] = ''
-    profile_pic_url: Optional[HttpUrl]
-    # is_private: bool
-    # is_verified: bool
+    profile_pic_url: Optional[HttpUrl] = None
 
 
 class Usertag(BaseModel):
     user: UserShort
-    x: float
-    y: float
+    x: Optional[float] = None
+    y: Optional[float] = None
 
 
 class Location(BaseModel):
-    pk: Optional[int]
+    pk: Optional[int] = None
     name: str
     address: Optional[str] = ''
-    lng: Optional[float]
-    lat: Optional[float]
-    external_id: Optional[int]
-    external_id_source: Optional[str]
-    # address_json: Optional[dict] = {}
-    # profile_pic_url: Optional[HttpUrl]
-    # directory: Optional[dict] = {}
+    lng: Optional[float] = None
+    lat: Optional[float] = None
+    external_id: Optional[int] = None
+    external_id_source: Optional[str] = None
+
+
+class ClipsMetadata(BaseModel):
+    original_sound_info: Optional[dict] = None  # <-- Corrigido para aceitar None
 
 
 class Media(BaseModel):
@@ -77,98 +65,46 @@ class Media(BaseModel):
     taken_at: Datetime
     media_type: int
     product_type: Optional[str] = ''  # only for IGTV
-    thumbnail_url: Optional[HttpUrl]
+    thumbnail_url: Optional[HttpUrl] = None
     location: Optional[Location] = None
     user: UserShort
     comment_count: int
     like_count: int
-    has_liked: Optional[bool]
-    caption_text: str
-    usertags: List[Usertag]
-    video_url: Optional[HttpUrl]  # for Video and IGTV
+    has_liked: Optional[bool] = None
+    caption_text: str = ''
+    usertags: Optional[List[Usertag]] = []
+    video_url: Optional[HttpUrl] = None  # for Video and IGTV
     view_count: Optional[int] = 0  # for Video and IGTV
     video_duration: Optional[float] = 0.0  # for Video and IGTV
     title: Optional[str] = ''
-    resources: List[Resource] = []
-
-
-class MediaOembed(BaseModel):
-    title: str
-    author_name: str
-    author_url: str
-    author_id: int
-    media_id: str
-    provider_name: str
-    provider_url: HttpUrl
-    type: str
-    width: Optional[int] = None
-    height: Optional[int] = None
-    html: str
-    thumbnail_url: HttpUrl
-    thumbnail_width: int
-    thumbnail_height: int
-    can_view: bool
-
-
-class Collection(BaseModel):
-    id: str
-    name: str
-    type: str
-    media_count: int
-
-
-class Comment(BaseModel):
-    pk: int
-    text: str
-    user: UserShort
-    created_at_utc: Datetime
-    content_type: str
-    status: str
-    has_liked: Optional[bool]
-    like_count: Optional[int]
-
-
-class StoryMention(BaseModel):
-    user: UserShort
-    x: Optional[float]
-    y: Optional[float]
-    width: Optional[float]
-    height: Optional[float]
-
-
-class StoryBuild(BaseModel):
-    mentions: List[StoryMention]
-    path: FilePath
-
-
-class StoryLink(BaseModel):
-    webUri: HttpUrl
+    resources: Optional[List[Resource]] = []
+    clips_metadata: Optional[ClipsMetadata] = None  # <-- Corrigido para aceitar None
 
 
 class DirectMessage(BaseModel):
-    id: int  # e.g. 28597946203914980615241927545176064
-    user_id: Optional[int]
-    thread_id: Optional[int]
+    id: int
+    user_id: Optional[int] = None
+    thread_id: Optional[int] = None
     timestamp: Datetime
-    item_type: Optional[str]
-    is_shh_mode: Optional[bool]
-    reactions: Optional[dict]
-    text: Optional[str]
-    media_share: Optional[Media]
-    reel_share: Optional[dict]
-    story_share: Optional[dict]
-    felix_share: Optional[dict]
-    placeholder: Optional[dict]
+    item_type: Optional[str] = None
+    is_shh_mode: Optional[bool] = None
+    reactions: Optional[dict] = None
+    text: Optional[str] = None
+    media_share: Optional[Media] = None
+    reel_share: Optional[Media] = None
+    story_share: Optional[dict] = None
+    felix_share: Optional[dict] = None
+    placeholder: Optional[dict] = None
 
 
 class DirectThread(BaseModel):
-    pk: int  # thread_v2_id, e.g. 17898572618026348
-    id: int  # thread_id, e.g. 340282366841510300949128268610842297468
-    messages: List[DirectMessage]
-    users: List[UserShort]
-    inviter: UserShort
-    left_users: List[UserShort]
-    admin_user_ids: list
+    pk: int
+    id: int
+    messages: Optional[List[DirectMessage]] = []
+    users: Optional[List[UserShort]] = []
+    inviter: Optional[UserShort] = None
+    left_users: Optional[List[UserShort]] = []
+    admin_user_ids: Optional[List[int]] = []
     last_activity_at: Datetime
     muted: bool
     is_pin: bool
@@ -189,24 +125,14 @@ class DirectThread(BaseModel):
     is_close_friend_thread: bool
     assigned_admin_id: int
     shh_mode_enabled: bool
-    last_seen_at: dict
+    last_seen_at: Optional[dict] = {}
 
     def is_seen(self, user_id: int):
-        """Have I seen this thread?
-        :param user_id: You account user_id
-        """
         user_id = str(user_id)
-        own_timestamp = int(self.last_seen_at[user_id]['timestamp'])
+        own_timestamp = int(self.last_seen_at.get(user_id, {}).get('timestamp', 0))
         timestamps = [
-            (int(v['timestamp']) - own_timestamp) > 0
+            (int(v.get('timestamp', 0)) - own_timestamp) > 0
             for k, v in self.last_seen_at.items()
             if k != user_id
         ]
         return not any(timestamps)
-
-
-class Hashtag(BaseModel):
-    id: int
-    name: str
-    media_count: Optional[int]
-    profile_pic_url: Optional[HttpUrl]
